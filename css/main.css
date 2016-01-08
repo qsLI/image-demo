@@ -1,0 +1,82 @@
+@charset "utf-8";
+/* CSS Document */
+/*清除浏览器样式*/
+*{
+    margin:0 0;
+    padding:0;
+}
+/*顶部导航栏*/
+.navTopb {
+    background-color: #0888D9;
+    width: auto;
+    height: 107px;
+}
+
+.navTopb ul li a {
+    color: #ffffff;
+}
+
+/*卫星信息*/
+.satellite-info {
+    width:auto;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #afd8f3;
+    height: auto !important;
+}
+
+.satellite-info table td {
+
+    color: #666;
+    font-size: 12px;
+    border-bottom: 1px dotted #DFDFDF;
+    line-height: 22.5px;
+}
+
+.satellite-info table th {
+
+    color: #444;
+    font-size: 12px;
+    text-align: left;
+    border-bottom: 1px dotted #DFDFDF;
+
+    padding: 0px 4px;
+}
+
+.info-title {
+    font-family: '微软雅黑';
+    font-size: 20px;
+    color: #4482ba;
+    font-weight: bold;
+}
+
+
+
+
+#footer {
+    width: auto;
+    background-color: #939393;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

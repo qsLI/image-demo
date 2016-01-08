@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- 可选的Bootstrap主题文件（一般不使用） -->
+    <link src="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap-theme.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/simplePagination.css"/>
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.datepick.css">
+    <script type="text/javascript" src="js/jquery.plugin.js"></script>
+    <script type="text/javascript" src="js/jquery.datepick.js"></script>
+    <script type="text/javascript" src="js/jquery-dateFormat.min.js"></script>
+    <script type="text/javascript" src="js/jquery.simplePagination.js"></script>
+    <title>Title</title>
+</head>
+<body>
+
+
+<!--顶部导航栏-->
+<div class="navTopb">
+    <div class="navLogo"><img src="./img/logo.png" style="padding-top:30px; padding-left: 30px"></div>
+</div>
+
+<div class="row clearfix" style="width: auto;height: auto;">
+
+    <!--卫星信息-->
+    <div class="col-sm-9 ">
+        <div class="  panel panel-default" style="margin-top: 10px; margin-left: 10px">
+            <div class="panel-heading">
+                卫星信息
+            </div>
+            <div class="panel-body">
+                <div class="satellite-info">
+                    <table width="88%" border="0" align="center" cellpadding="0" cellspacing="0"
+                           style="margin: 25px auto;">
+                        <tbody>
+                        <tr>
+                            <td colspan="6"><font class="info-title">CBERS卫星数据集 </font></td>
+                        </tr>
+                        <tr>
+                            <th width="12%">数据集名称：</th>
+                            <td width="25%">CBERS卫星数据集</td>
+                            <th width="10%">卫星：</th>
+                            <td width="26%">CBERS-01/02/02B</td>
+                            <th width="10%">传感器：</th>
+                            <td width="23%">CCD</td>
+                        </tr>
+                        <tr>
+                            <th>产品级别：</th>
+                            <td>L4</td>
+                            <th>空间分辩率：</th>
+                            <td>20m</td>
+                            <th>产品格式：</th>
+                            <td>GeoTIFF</td>
+                        </tr>
+                        <tr>
+                            <th> 时间跨度：</th>
+                            <td>2000-2007</td>
+                            <th>时间间隔：</th>
+                            <td>4年</td>
+                            <th>条目（景）：</th>
+                            <td>2682</td>
+                        </tr>
+                        <tr>
+                            <th>数据量：</th>
+                            <td>224GB</td>
+                            <th>共享范围：</th>
+                            <td>国内</td>
+                            <th> 覆盖区域：</th>
+                            <td>全国(覆盖2次)</td>
+                        </tr>
+                        <tr>
+                            <th>资源提供单位：</th>
+                            <td colspan="5">中国资源卫星应用中心</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--时间信息-->
+    <div class="col-sm-3  pull-left">
+        <div class="panel panel-default " style="margin-top: 10px; margin-right: 10px">
+            <div class="panel-heading">
+                影像日期
+            </div>
+            <div class="panel-body">
+                <div id="inlineDatepicker"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="panel panel-default" style="margin: 10px 10px">
+    <div class="panel-heading" id="image_date">
+        影像
+    </div>
+    <div class="panel-body" id="imgContainer">
+            <div class="row" style="margin-top: 20px; margin-left: 10px; margin-right: 10px">
+
+
+
+            </div>
+        <div class="center-block text-center">
+            <div id="callBackPager" ></div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<!--版权信息-->
+<div id="footer">
+    <div class="container ">
+        <div class="text-center">
+            <BR>
+            版权所有：IIP实验室
+            <BR><BR><BR>
+            建议使用IE8.0、Chrome28以上版本，并以1280*1024以上分辨率浏览本站
+            <BR><BR>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    image_data = null;
+    image_count = 0;
+    $(function () {
+
+//        日期选择
+        $('#inlineDatepicker').datepick({onSelect: onDateChange, maxDate: new Date(), minDate: new Date("2016-01-06")});
+        $('#inlineDatepicker').datepick({dateFormat: 'yyyy-mm-dd'});
+//        初始化
+        $('#image_date').text( $.format.date(new Date(), "yyyy-MM-dd") + " 影像");
+//        请求数据
+        $.ajax({
+            type: 'POST',
+            url:'http://127.0.0.1:5000/api/getImage',
+            data: {},
+            success: function(data) {
+                if(data.status !=0){
+                    console.log("error")
+                    return;
+                }else{
+                  // do something with data
+                    image_count = data.id.length;
+                    image_data = data.id;
+            //        分页
+                    $('#callBackPager').pagination({
+                        items: image_count,
+                        itemsOnPage: 12,
+                        cssStyle: 'light-theme',
+                        onPageClick: changePage,
+                        onInit: initPaginator,
+                    });
+                }
+            },
+            dataType: 'json'
+        })
+
+
+        $('#callBackPager').addClass('text-center');
+    });
+
+    function onDateChange(date) {
+        select_date = $.format.date(date[0], "yyyy-MM-dd");
+        $('#image_date').text( select_date + " 影像");
+        console.log(select_date);
+        $.ajax({
+          type: 'POST',
+          url:'http://127.0.0.1:5000/api/getImage?date=' + select_date,
+          data: {},
+          success: function(data) {
+              if(data.status !=0){
+                  console.log("error")
+                  return;
+              }else{
+                  //reload data
+                  image_count = data.id.length;
+                  image_data = data.id;
+
+                  $('#callBackPager').pagination({
+                      items: image_count,
+                      itemsOnPage: 12,
+                      cssStyle: 'light-theme',
+                      onPageClick: changePage,
+                      onInit: initPaginator,
+                  });
+              }
+          },
+          dataType: 'json'
+        })
+    }
+
+     function changePage(pageNumber, event) {
+       console.log(pageNumber);
+       insertImage(image_data.slice((pageNumber - 1)*12, pageNumber*12));
+     }
+
+    function initPaginator() {
+        if(image_count <= 12)
+            insertImage(image_data);
+        else
+            insertImage(image_data.slice(0,12));
+    }
+
+    function insertImage(data) {// generate image tags
+        $('#imgContainer .row').empty();
+        $.each(data, function(i, item) {
+                    $('#imgContainer .row').append(
+                            '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://127.0.0.1:5000/api/getImageById?id=' + item + '"> <img src="' + 'http://127.0.0.1:5000/api/getImageById?id=' + item + '"alt="通用的占位符缩略图">'
+                            + '  </a>     </div>    <div class="caption">      <h3>缩略图标签</h3>               <p>一些示例文本。一些示例文本。</p>                  <p>               <a href="#1" class="btn btn-primary" role="button">                    按钮                 </a>                        <a href="#" class="btn btn-default" role="button">                                按钮                            </a>                      </p>                    </div>                 </div>         '
+                    )
+                }
+        )
+    }
+
+</script>
+
+</html>
